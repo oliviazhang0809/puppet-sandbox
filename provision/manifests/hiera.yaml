@@ -1,0 +1,9 @@
+:hierarchy:
+  - "env/%{environment}/common"
+  - common
+
+:backends:
+  - yaml
+
+:yaml:
+  :datadir: "%{settings::manifestdir}/hieradata"

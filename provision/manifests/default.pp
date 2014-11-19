@@ -1,14 +1,9 @@
 #
 # site.pp - defines defaults for vagrant provisioning
 #
+Exec { path => [ "/bin/", "/sbin/" , "/usr/bin/", "/usr/sbin/" ] }
 
-stage { 'pre': before => Stage['main'] }
-
-class { 'repos':   stage => 'pre' }
-class { 'vagrant': stage => 'pre' }
-
-class { 'puppet': }
-class { 'networking': }
+hiera_include('classes')
 
 if $hostname == 'puppet' {
   class { 'puppet::server': }

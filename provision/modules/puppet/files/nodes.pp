@@ -1,5 +1,5 @@
 #
-# nodes.pp - template used by puppet to defines all puppet nodes and then ignored
+# nodes.pp - template used by puppet
 #
 
 # MASTER
