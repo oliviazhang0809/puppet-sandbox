@@ -1,8 +1,12 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
+VAGRANT_VERSION = "2"
 domain = 'example.com'
 box = 'centos-64-x64-vbox4210'
+
+# hiera associated
+environment = "dev"
 
 puppet_nodes = [
   {:hostname => 'puppet', :role => 'master', :ip => '172.16.32.10', :box => box, :fwdhost => 8142, :fwdguest => 8140, :ram => 512},
@@ -12,7 +16,7 @@ puppet_nodes = [
   {:hostname => 'influxdbChild2', :role => 'influxdb', :ip => '172.16.32.14', :box => box, :fwdhost => 8006, :fwdguest => 8083},
 ]
 
-Vagrant.configure("2") do |config|
+Vagrant.configure(VAGRANT_VERSION) do |config|
   puppet_nodes.each do |node|
     config.vm.define node[:hostname] do |node_config|
       node_config.vm.hostname = node[:hostname] + '.' + domain
@@ -27,23 +31,20 @@ Vagrant.configure("2") do |config|
         vb.memory = 1024
         vb.customize ["modifyvm", :id, "--cpuexecutioncap", "50"]
       end
+      node_config.vm.synced_folder ".", "/etc/puppet"
 
       # install puppet gem
       node_config.vm.provision "shell", inline: "gem install -q -v=3.7.2 --no-rdoc --no-ri puppet"
-      # install hiera file backend
-      node_config.vm.provision "shell", inline: "gem install -q -v=1.1.0 --no-rdoc --no-ri hiera-file"
-      # install hiera deep merge
-      node_config.vm.provision "shell", inline: "gem install -q -v=1.0.1 --no-rdoc --no-ri deep_merge"
-
-      node_config.vm.provision :shell do |shell|
-        shell.inline = "mkdir -p /etc/puppet/modules;
-                        gem install puppet-lint;
-                        yum -y install telnet"
-      end
 
       node_config.vm.provision :puppet do |puppet|
-        puppet.manifests_path = 'provision/manifests'
-        puppet.module_path = 'provision/modules'
+        puppet.hiera_config_path = "hiera.yaml"
+        puppet.manifests_path = 'manifests'
+        puppet.manifest_file  = "default.pp"
+        puppet.module_path = ['modules', 'sites']
+        puppet.facter = {
+          "environment" => environment
+        }
+        puppet.options = "--verbose --debug --test"
       end
 
       # shut off the firewall

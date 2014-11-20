@@ -13,9 +13,6 @@ class puppet::params {
     'redhat': {
       $server_package_name = 'puppet-server'
     }
-    'debian': {
-      $server_package_name = 'puppetmaster'
-    }
     default: {
       fail("Module 'puppet' is not currently supported by Puppet Sandbox on ${::operatingsystem}")
     }

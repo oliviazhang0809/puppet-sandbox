@@ -1,0 +1,7 @@
+---
+app_environment: development
+classes:
+  - repos
+  - vagrant
+  - puppet
+  - networking
