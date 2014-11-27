@@ -1,3 +1,7 @@
+# Class: grafanaimpl
+#
+# This class implements grafana module
+#
 class grafanaimpl(
     $influxdb_host = hiera('influxdb_host'),
     $influxdb_dbpath = hiera('influxdb_dbpath'),
@@ -8,10 +12,10 @@ class grafanaimpl(
     ) {
 
     class { 'grafana':
-      influxdb_host => $influxdbhost,
-      influxdb_dbpath => $influxdb_dbpath,
-      influxdb_user => $influxdb_user,
-      influxdb_pass => $influxdb_pass,
+      influxdb_host         => $influxdbhost,
+      influxdb_dbpath       => $influxdb_dbpath,
+      influxdb_user         => $influxdb_user,
+      influxdb_pass         => $influxdb_pass,
       influxdb_grafana_user => $influxdb_grafana_user,
       influxdb_grafana_pass => $influxdb_grafana_pass,
     }

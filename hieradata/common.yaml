@@ -1,6 +1,1 @@
 ---
-classes:
-  - repos
-  - vagrant
-  - puppet
-  - networking

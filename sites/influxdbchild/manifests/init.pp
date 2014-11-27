@@ -1,19 +1,22 @@
-class influxdbchild {
-    include 'influxdb'
+# Class: influxdbchild
+#
+# This class implements influxdb module and config it to join cluster based on seed node
+#
+class influxdbchild(
+    $cluster_seed_servers = hiera('cluster_seed_servers')
+    ) {
 
-    # replace the value of seed-servers = []
-    file { '/opt/influxdb/shared/config.toml':
-        ensure => present,
-    }->
-    file_line { 'replace content of seed server':
-      path => '/opt/influxdb/shared/config.toml',
-      line => 'seed-servers = ["influxdbSeed.example.com:8090"]',
-      match   => "^seed-servers.=.*",
+    # step 1: load and install influxdb
+    # step 2: set seed-servers = ["::fqdn for masternode: 8090"]
+    # step 3: remove raft dir and restart influxdb
+
+    class {'influxdb':
+        cluster_seed_servers => $cluster_seed_servers
     }
 
-    # remove the raft dir
-    file { '/opt/influxdb/shared/data/raft':
-        ensure => absent,
+    file { 'remove_raft':
+        ensure  => absent,
+        path    => '/opt/influxdb/shared/data/raft',
         force   => true,
         recurse => true,
         notify  => Service['influxdb'],

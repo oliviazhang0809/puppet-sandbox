@@ -4,17 +4,11 @@
 #
 # This class file is not called directly.
 #
+
 class puppet::params {
 
-  $client_ensure = 'latest'
-  $server_ensure = 'latest'
+  $client_ensure = hiera('client_ensure')
+  $server_ensure = hiera('server_ensure')
+  $server_package_name = hiera('server_package_name')
 
-  case $::osfamily {
-    'redhat': {
-      $server_package_name = 'puppet-server'
-    }
-    default: {
-      fail("Module 'puppet' is not currently supported by Puppet Sandbox on ${::operatingsystem}")
-    }
-  }
 }

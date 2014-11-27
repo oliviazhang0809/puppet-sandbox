@@ -1,76 +1,38 @@
-puppet-sandbox
-==============
+# metrics
 
-## Description
-This Vagrant-based Puppet development environment for creating new modules. 
-Inspired by [elasticdog/puppet-sandbox](https://github.com/elasticdog/puppet-sandbox).
+Stingray's Metrics Collection & Aggregation System. This system provides
+fast, large-scale transport, storage and aggregation of metrics data
+from production level services.
 
-Puppet Sandbox will set up and configure five separate virtual machines:
+We're building this system out now, and we're planning to deploy it
+to production to support
+[userplatformserv](https://github.paypal.com/customers-r/user-platform-serv)
+(UPS). We'll deploy it on a larger scale after we prove it on UPS.
 
-* _puppet.example.com_ - the Puppet master server           
-* _influxdbSeed.example.com_ - the influxdb seed node       
-* _influxdbChild1.example.com_ - influxdb client nodes      
-* _influxdbChild2.example.com_ - influxdb client nodes      
-* _grafana.example.com_ - grafana + apache server           
+# High Level Overview
 
-These VMs can be used in conjunction to segregate and test your modules
-based on node roles, Puppet environments, etc. 
+The metrics project provides:
 
+1. an infrastructure to transport sustained large amounts of metrics data
+to an aggregation backend.
+2. a system to run custom aggregations on the data from (1)
+3. an infrastructure to view the data from (1) in near real time
 
-## Requirements
-To use Puppet Sandbox, you must have the following items installed and working:
+# High Level Architecture
 
-* [VirtualBox](https://www.virtualbox.org/)
-* [Vagrant 1.1+](http://vagrantup.com/)
+This system is composed of three major components:
 
-Currently we are using *centos-64-x64-vbox4210* (centOS) box to do the demo.
+1. __client side API__ - a new API that services add to their codebase
+to record metrics. This API implementation sends data in
+[statsd format](https://github.com/b/statsd_spec)
+2. __collection daemon__ - a statsd compatible daemon that runs alongside the
+CAL daemon to collect data from the API in (1)
+3. __time-series database__ - the database that collects & stores data from (2).
+This database is capable of running arbitrary aggregations. Currently we're
+using [InfluxDB](https://github.com/influxdb/influxdb).
 
-## Instructions
-Make sure you have a compatible Vagrant base box (if you don't have one
-already, it will download a 64-bit centOS box for you), and then you
-should be good to clone this repo and go:
+Please see the [Specification](./spec/SPEC.md) for more details this system.
 
-    $ vagrant box list
-    centos-64-x64-vbox4210
-    $ git clone git@github.paypal.com:tzhang1/puppet-sandbox.git
-    $ cd puppet-sandbox/
+# Test your code
 
-## Initial Startup
-To bring up the Puppet Sandbox environment, issue the following command:
-
-    $ vagrant up --provision
-
-The following tasks will be handled automatically:
-
-1. The Puppet server daemon will be installed and enabled on the master machine.
-2. The Puppet client agent will be installed and enabled on all four machines.
-3. A host-only network will be set up with all machines knowing how to communicate with each other.
-4. All client certificate requests will be automatically signed by the master server. (now the setting is the master will auto-sign all certificate requests but it might need to change due to security concerns)
-5. The master server will utilize the `nodes.pp` file and `modules/` directory that exist **outside of the VMs** (in your puppet-sandbox Git working directory) by utilizing VirtualBox's shared folder feature.
-
-
-## Check Your Handiwork 
-To log on to the virtual machines and see the result of your applied Puppet modules, just use standard [Vagrant Multi-VM Environment](http://vagrantup.com/docs/multivm.html) commands, and provide the
-proper VM name (`puppet`, `influxdbSeed`, `influxdbChild1`, `influxdbChild2` and `grafana`):
-
-    $ vagrant ssh influxdbSeed
-
-If you don't want to wait for the standard 30-minutes between Puppet runs by the agent daemon, you can easily force a manual run:
-
-    [vagrant@influxdbSeed ~]$ sudo puppet agent --test
-
-**[Note]** 
-*Unfortunately the vagrant process is not very stable, which means even the firewall has been shut down, puppet agents still have chance to unable to connect to the master --which really sucks.*
-*My suggestion here is to do `sudo vagrant reload $node_name --provision` and often the problem is resolved.*
-
-## See Visualized Result!
-1. Database cluster - you should be able to see database cluster (under cluster tab) from any of the hosts of three nodes in port 8083. 
-  e.g. http://172.16.32.11:8083/ (**Note**: you need set up seed server + 2 nodes, i.e. run `sudo puppet agent --test` on influxdbSeed, influxdbChild1 and influxdbChild2, to see the 3 nodes cluster. InfluxdbSeed needs to be run first because it's defined as seed server that other db nodes are joining to.)
-  If the connection failed somehow, it will reconnect again with more machines on the cluster.
-
-  This is just because influxdb doesn't remove records of dead machines in the cluster.
-2. Grafana - currently grafana is connected with seed influxdb. So you can see the visualization from http://172.16.32.12/ (though there is nothing inside because there is no data in db.)
-
-## Next Step 
-1. Set up on c3 instances
-2. Include Hiera to pull site-specific data out of manifests. 
+This repository has code for our virtual machine based development environment. We use [Vagrant](http://vagrantup.com) to automatically and consistently build and manage VMs on each of our machines. This document comes along with [Setup instructions](SETUP.md).

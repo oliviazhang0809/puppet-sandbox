@@ -26,6 +26,6 @@ DEPENDENCIES
   echocat-puppet-grafana (>= 0)
   gini-archive (= 0.2.1)
   jdowning-influxdb (= 0.3.0)
-  puppetlabs-apache (>= 0)
+  puppetlabs-apache (= 1.2.0)
   puppetlabs-stdlib (= 4.4.0)
 

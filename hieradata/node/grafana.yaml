@@ -3,15 +3,15 @@ classes:
   - grafanaimpl
   - apacheimpl
 
-influxdb_host: '172.16.32.11'
-influxdb_dbpath: '/db/test2'
+influxdb_host: %{cluster_seed_servers}
+influxdb_dbpath: '/db/%{db_name}'
 influxdb_user: 'root'
 influxdb_pass: 'root'
 influxdb_grafana_user: 'root'
 influxdb_grafana_pass: 'root'
 
 default_vhost: false
-servername: '172.16.32.11'
+servername: %{cluster_seed_servers}
 port: 80
 docroot: '/opt/grafana'
 error_log_file: 'grafana_error.log'

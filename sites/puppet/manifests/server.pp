@@ -33,11 +33,13 @@
 #
 class puppet::server(
   $ensure       = $puppet::params::server_ensure,
-  $package_name = 'puppet-server'
+  $package_name = $puppet::params::server_package_name,
 ) inherits puppet::params {
 
-  file { [ '/etc/puppet', '/etc/puppet/files' ]:
+  file { [ '/etc/puppet', '/etc/puppet/modules' ]:
     ensure => directory,
+    owner  => 'root',
+    group  => 'root',
     before => Package[ 'puppetmaster' ],
   }
 
@@ -48,8 +50,8 @@ class puppet::server(
 
   file { 'puppet.conf':
     path    => '/etc/puppet/puppet.conf',
-    owner   => 'puppet',
-    group   => 'puppet',
+    owner   => 'root',
+    group   => 'root',
     mode    => '0644',
     source  => 'puppet:///modules/puppet/puppet.conf',
     require => Package[ 'puppetmaster' ],
@@ -58,14 +60,15 @@ class puppet::server(
 
   file { 'autosign.conf':
     path    => '/etc/puppet/autosign.conf',
-    owner   => 'puppet',
-    group   => 'puppet',
+    owner   => 'root',
+    group   => 'root',
     mode    => '0644',
     content => '*',
     require => Package[ 'puppetmaster' ],
   }
+
   service { 'puppetmaster':
-    enable => true,
     ensure => running,
+    enable => true,
   }
 }

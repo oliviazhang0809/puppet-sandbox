@@ -1,0 +1,11 @@
+---
+classes:
+  - repos
+  - vagrant
+  - puppet
+  - networking
+
+client_ensure: 'latest'
+server_ensure: 'latest'
+server_package_name: 'puppet-server'
+cluster_seed_servers: '["%{cluster_seed_servers}:8090"]'

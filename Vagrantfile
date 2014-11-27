@@ -1,55 +1,80 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
-VAGRANT_VERSION = "2"
-domain = 'example.com'
-box = 'centos-64-x64-vbox4210'
+require 'vagrant-openstack-plugin'
 
-# hiera associated
+VAGRANTFILE_API_VERSION = "2"
+domain = 'example.com'
+virtual_box = 'centos-64-x64-vbox4210'
+openstack_box = 'emi-centos-6.4-x86_64'
+
+# Note: please check variables are defined are expected
 environment = "dev"
+provider = "virtualbox" # could be either "virtualbox" or "openstack"
+cluster_seed_servers = "influxdbSeed.example.com" # this is for virtualbox
+db_name = "test2"
 
 puppet_nodes = [
-  {:hostname => 'puppet', :role => 'master', :ip => '172.16.32.10', :box => box, :fwdhost => 8142, :fwdguest => 8140, :ram => 512},
-  {:hostname => 'influxdbSeed', :role => 'influxdb', :ip => '172.16.32.11', :box => box, :fwdhost => 8004, :fwdguest => 8083},
-  {:hostname => 'grafana', :role => 'grafana', :ip => '172.16.32.12', :box => box, :fwdhost => 8003, :fwdguest => 80},
-  {:hostname => 'influxdbChild1', :role => 'influxdb', :ip => '172.16.32.13', :box => box, :fwdhost => 8005, :fwdguest => 8083},
-  {:hostname => 'influxdbChild2', :role => 'influxdb', :ip => '172.16.32.14', :box => box, :fwdhost => 8006, :fwdguest => 8083},
+  {:hostname => 'puppet', :role => 'master', :ip => '172.16.32.10', :fwdhost => 8142, :fwdguest => 8140, :autostart => true, :ram => 1024},
+  {:hostname => 'influxdbSeed', :role => 'influxdbSeed', :ip => '172.16.32.11', :fwdhost => 8004, :fwdguest => 8083, :autostart => true, :ram => 1024},
+  {:hostname => 'grafana', :role => 'grafana', :ip => '172.16.32.12', :fwdhost => 8003, :fwdguest => 80, :autostart => false, :ram => 1024},
+  {:hostname => 'influxdbChild1', :role => 'influxdbChild', :ip => '172.16.32.13', :fwdhost => 8005, :fwdguest => 8083, :autostart => false, :ram => 1024},
+  {:hostname => 'influxdbChild2', :role => 'influxdbChild', :ip => '172.16.32.14', :fwdhost => 8006, :fwdguest => 8083, :autostart => false, :ram => 1024},
+  {:hostname => 'hekad', :role => 'hekad', :ip => '172.16.32.15', :fwdhost => 8007, :fwdguest => 8125, :autostart => false, :ram => 1024},
 ]
 
-Vagrant.configure(VAGRANT_VERSION) do |config|
+Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   puppet_nodes.each do |node|
-    config.vm.define node[:hostname] do |node_config|
+
+    config.vm.provider :virtualbox do |vb, newconfig|
+      newconfig.vm.box = virtual_box
+      newconfig.vm.box_url = "http://puppet-vagrant-boxes.puppetlabs.com/" + virtual_box + ".box"
+      vb.gui = false
+      vb.memory = node[:ram]
+      vb.customize ["modifyvm", :id, "--cpuexecutioncap", "75"]
+    end
+
+    config.vm.provider :openstack do |os, newconfig|
+        newconfig.vm.box = openstack_box
+        newconfig.vm.box_url = "http://stingray-vagrant.stratus.dev.ebay.com/vagrant/boxes/openstack/" + openstack_box + ".box"
+        newconfig.ssh.private_key_path = "~/.ssh/metrics.pem"
+        os.keypair_name = "metrics"
+    end
+
+    config.vm.define node[:hostname], autostart: node[:autostart] do |node_config|
+
+    # only for virtualbox, hostname and ip need to be setup
+    if provider == "virtualbox"
       node_config.vm.hostname = node[:hostname] + '.' + domain
       node_config.vm.network :private_network, ip: node[:ip]
-      if node[:fwdhost]
-        node_config.vm.network :forwarded_port, guest: node[:fwdguest], host: node[:fwdhost]
-      end
-      node_config.vm.provider :virtualbox do |vb, newconfig|
-        newconfig.vm.box = node[:box]
-        newconfig.vm.box_url = "http://puppet-vagrant-boxes.puppetlabs.com/" + box + ".box"
-        vb.gui = false
-        vb.memory = 1024
-        vb.customize ["modifyvm", :id, "--cpuexecutioncap", "50"]
-      end
-      node_config.vm.synced_folder ".", "/etc/puppet"
+    end
 
-      # install puppet gem
-      node_config.vm.provision "shell", inline: "gem install -q -v=3.7.2 --no-rdoc --no-ri puppet"
+    if node[:fwdhost]
+      node_config.vm.network :forwarded_port, guest: node[:fwdguest], host: node[:fwdhost]
+    end
 
-      node_config.vm.provision :puppet do |puppet|
-        puppet.hiera_config_path = "hiera.yaml"
-        puppet.manifests_path = 'manifests'
-        puppet.manifest_file  = "default.pp"
-        puppet.module_path = ['modules', 'sites']
-        puppet.facter = {
-          "environment" => environment
-        }
-        puppet.options = "--verbose --debug --test"
-      end
+    # install puppet gem
+    node_config.vm.provision "shell", inline: "gem install -q -v=3.7.3 --no-rdoc --no-ri puppet"
+
+    node_config.vm.synced_folder ".", "/var/www/puppet/", mount_options: ["dmode=777,fmode=666"]
+
+    node_config.vm.provision :puppet do |puppet|
+      puppet.hiera_config_path = "hiera.yaml"
+      puppet.manifests_path = 'manifests'
+      puppet.manifest_file  = "default.pp"
+      puppet.module_path = ['modules', 'sites']
+      puppet.facter = {
+        "role" => node[:role],
+        "environment" => environment,
+        "cluster_seed_servers" => cluster_seed_servers,
+        "db_name" => db_name
+      }
+      puppet.options = "--verbose --debug --test"
+    end
 
       # shut off the firewall
-      node_config.vm.provision "shell", inline: "iptables -F"
-      node_config.vm.provision "shell", inline: "service iptables save"
+    node_config.vm.provision "shell", inline: "iptables -F"
+    node_config.vm.provision "shell", inline: "service iptables save"
     end
   end
 end

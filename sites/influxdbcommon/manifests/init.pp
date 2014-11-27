@@ -1,9 +1,16 @@
+# Class: influxdbcommon
+#
+# This class implements influxdb module and config it as seed node of cluster
+#
 class influxdbcommon {
-    include 'influxdb'
 
-    # remove raft dir and restart
+    # step 1: load and install influxdb
+    # step 2: remove raft dir and restart influxdb
+
+    class {'influxdb': }
+
     file { '/opt/influxdb/shared/data/raft':
-        ensure => absent,
+        ensure  => absent,
         force   => true,
         recurse => true,
         notify  => Service['influxdb'],
