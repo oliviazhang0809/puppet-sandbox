@@ -1,65 +1,96 @@
-Metrics Setup Instructions
-==============
+# Metrics Setup Instructions
 
-## Description
+## Introduction
 
-Puppet Sandbox will set up and configure five separate machines:
+This program is a multi-VM Vagrant-based Puppet development environment used for creating and testing new modules outside of your production environment.
+It will set up and configure following machines with customized settings.
 
-* _puppet_ - the Puppet master server
-* _influxdbSeed_ - the influxdb seed node       
-* _influxdbChild1_ - influxdb client nodes      
-* _influxdbChild2_ - influxdb client nodes      
-* _grafana_ - grafana + apache server
-
+* `puppet` - the Puppet master server
+* `influxdbSeed` - the influxdb seed node
+* `influxdbChild1` - influxdb client nodes
+* `influxdbChild2` - influxdb client nodes
+* `grafana` - grafana + apache server
+* `hekad` - heka daemon
 
 ## Initial Setup
-1. Running with virtualbox, these machines will with the following ip addresses and ports:
+### Open Ports
 
-* _puppet_ - 172.16.32.10:8140
-* _influxdbSeed_ - 172.16.32.11:8083
-* _grafana_ - 172.16.32.12:80
-* _influxdbChild1_ - 172.16.32.13:8083
-* _influxdbChild2_ - 172.16.32.14:8083
+The program will use following forward host ports so please be sure they are available when running the program.
 
-2. Default values in Vagrantfiles
+* `8142` for puppet master
+* `8003` for grafana
+* `8004` for influxdbSeed
+* `8005` for influxdbChild1
+* `8006` for influxdbChild2
+* `8007` for hekad
+
+If any of these ports has special usage, you can always make changes in `vagrantfile`.
+
+### Gem Install
+
+Make sure you have installed required gems.
+
+* [vagrant-openstack-plugin](https://github.com/cloudbau/vagrant-openstack-plugin)
+
+This gem is required when running with c3 instances. You can easily install it by:
+
+```
+$ vagrant plugin install vagrant-openstack-plugin
+```
+
+* [librarian-puppet](https://github.com/rodjek/librarian-puppet)
+
+This gem can help import modules specified in Puppetfile. You can easily install it by:
+
+```
+$ sudo gem install librarian-puppet -v=1.3.2
+```
+Note, you need to have `puppet` gem in your system to have `librarian-puppet` workable.
+If you don't have it, please also install it as well.
+
+```
+$ sudo gem install puppet -v=3.7.2
+```
+
+Then you can run
+
+```
+$ librarian-puppet install
+```
+to import all modules -- at this time you will have an extra folder `modules` which contains all dependencies.
+
+**TODO**: We will probably automate this in the future after boxes have ruby >= 1.9.3 installed. The automation script is already finished and can be found [here](https://github.com/oliviazhang0809/grafana/tree/master/librarian-puppet)
+
+### Default Value Setup
+
+Please check settings in `Vagrantfile`, to see if the following variables are set as you expected.
 
 `environment`: "dev" -- development environment
 
-`provider`: "virtualbox"
+`provider`: "virtualbox" -- default provider is set as virtualbox
 
 `cluster_seed_servers`: "influxdbSeed.example.com"
 
-3. Admin & Password for influxdb
-`
- 
-## Play Around
+`db_name`: "test2" -- default database
 
-[Step 1]
-Before `vagrant up` your boxes, please finish [INSTALLATION](https://github.paypal.com/Stingray/dev-environment/blob/develop/INSTALLATION.md) so that you have the workable environment setup.
+Running with virtualbox, these machines are using following IP addresses and ports:
 
-[Step 2]
-Install [librarian-puppet](https://github.com/rodjek/librarian-puppet/blob/master/README.md#how-to-use) gem to import modules.
+* _puppet_ - `172.16.32.10:8140`
+* _influxdbSeed_ - `172.16.32.11:8083`
+* _grafana_ - `172.16.32.12:80`
+* _influxdbChild1_ - `172.16.32.13:8083`
+* _influxdbChild2_ - `172.16.32.14:8083`
 
-(Install librarian-puppet gem & puppet gem)
+For influxdb cluster, the default username and password are both `root`.
 
-    $ sudo gem install librarian-puppet -v=1.3.2
+### Environment Installation
 
-    $ sudo gem install puppet -v=3.7.2
+To `vagrant up` your c3 boxes, please finish [INSTALLATION](https://github.paypal.com/Stingray/dev-environment/blob/develop/INSTALLATION.md) to have correct environment setup.
 
-And then under the project root path, run
+### Correct Activation Order
 
-    $ librarian-puppet install
-    
-so you will have an extra folder `modules` which contains all dependencies.
-
-_TODO_ We will probably automate this after boxes have ruby >= 1.9.3 installed. The automation script can be found [here](https://github.com/oliviazhang0809/grafana/tree/master/librarian-puppet)
-
-[Step 3]
-Also you need to check settings in `Vagrantfile`, to see if `environment`, `provider` and `cluster_seed_servers` are set correctly.
-
-[Step 4]
-To have machines set up correctly, you need to `vagrant up` puppet (master node) at first and influxdbSeed (the seed of the cluster) the second. It doesn't matter in what order the rest machines are brought up.
-Also, please close associated forward host ports on your localhost. By default, it is port 8142 for puppet master, 8003 for grafana, 8004 - 8006 for influxdb nodes.
+* Puppet master (puppet) node must be activated before all other nodes.
+* influxdbSeed must be activated before child nodes (influxdbChild1, influxdbChild2).
 
 ## Bring up your machines
 

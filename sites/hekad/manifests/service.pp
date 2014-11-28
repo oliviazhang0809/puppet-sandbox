@@ -2,9 +2,11 @@
 # DO NO CALL DIRECTLY
 class hekad::service {
 
-    exec {'start_service':
-        command     => "/bin/bash ${hekad::exec_path} start",
-        subscribe   => File['/opt/hekad/shared/init.sh'],
-        refreshonly => true,
-    }
+  service { 'hekad':
+    ensure     => running,
+    enable     => true,
+    hasstatus  => true,
+    hasrestart => true,
+    require    => Class['hekad::install']
+  }
 }

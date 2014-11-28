@@ -41,7 +41,7 @@ config=/opt/hekad/shared/config.toml
 
 lockfile=/var/lock/subsys/$prog
 
-HEKA_USER=root
+HEKA_USER=hekadUser
 
 start() {
     [ -x $exec ] || exit 5

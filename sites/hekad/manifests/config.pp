@@ -74,7 +74,8 @@ class hekad::config {
   # defaults for all settings
   Ini_setting {
     ensure  => present,
-    require => Package['hekad'],
     path    => $hekad::config_path,
+    notify  => Service['hekad'],
+    require => Package['hekad'],
   }
 }

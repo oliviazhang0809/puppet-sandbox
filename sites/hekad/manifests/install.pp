@@ -4,13 +4,20 @@ class hekad::install {
 
   file { [ '/etc/hekad', '/opt/hekad', '/opt/hekad/shared', '/var/cache/hekad' ]:
     ensure => directory,
-    owner  => 'root',
-    group  => 'root',
+    owner  => 'hekadUser',
+    group  => 'hekadUser',
     before => Package[ 'hekad' ],
-  } ->
+  }
 
-  file { '/opt/hekad/shared/init.sh':
+  file { '/etc/init.d/hekad':
     content => template('hekad/init.sh'),
+    owner   => 'hekadUser',
+    group   => 'hekadUser',
+    before  => Exec['create_service']
+  }
+
+  exec {'create_service':
+    command => 'chmod +x /etc/init.d/hekad',
   }
 
   package { 'hekad':
@@ -26,7 +33,7 @@ class hekad::install {
 
   # get the package
   staging::file { 'hekad-package':
-      source   => $package_source,
+    source   => $package_source,
   }
 
   # install the package
