@@ -27,18 +27,7 @@ class hekad (
   $password                             = $hekad::params::password,
 ) inherits hekad::params {
 
-  user { 'hekadUser':
-    ensure  => present,
-    comment => 'hekad User',
-    gid     => 'hekadUser',
-    require => Group['hekadUser'],
-  }
-
-  group { 'hekadUser':
-    ensure => present,
-  }
-
   class { 'hekad::config': }
-  class { 'hekad::install': require => User['hekadUser'], }
+  class { 'hekad::install': }
   class { 'hekad::service': }
 }

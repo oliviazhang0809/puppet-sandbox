@@ -6,7 +6,26 @@
 #
 class vagrant {
 
+  user { 'puppet':
+    ensure  => present,
+    comment => 'Puppet',
+    gid     => 'puppet',
+    require => Group['puppet'],
+  }
+
   group { 'puppet':
     ensure => present,
   }
+
+  user { 'hekadUser':
+    ensure  => present,
+    comment => 'hekad User',
+    gid     => 'hekadUser',
+    require => Group['hekadUser'],
+  }
+
+  group { 'hekadUser':
+    ensure => present,
+  }
+
 }

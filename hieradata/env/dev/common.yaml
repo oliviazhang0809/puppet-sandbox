@@ -1,7 +1,5 @@
 ---
 classes:
-  - repos
-  - vagrant
   - puppetclient
   - networking
 
