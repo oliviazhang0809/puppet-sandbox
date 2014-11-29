@@ -2,7 +2,7 @@
 classes:
   - repos
   - vagrant
-  - puppet
+  - puppetclient
   - networking
 
 client_ensure: 'latest'

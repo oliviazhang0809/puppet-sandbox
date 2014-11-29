@@ -7,6 +7,11 @@ class puppetmaster(
     $package_name = hiera('server_package_name')
     ){
 
+  package { 'puppetmaster':
+    ensure => $ensure,
+    name   => $package_name,
+  }
+
   file { [ '/etc/puppet', '/etc/puppet/modules' ]:
     ensure => directory,
     owner  => 'puppet',
@@ -14,25 +19,20 @@ class puppetmaster(
     before => Package[ 'puppetmaster' ],
   }
 
-  package { 'puppetmaster':
-    ensure => $ensure,
-    name   => $package_name,
-  }
-
   file { 'puppet.conf':
     path    => '/etc/puppet/puppet.conf',
     owner   => 'puppet',
     group   => 'puppet',
     mode    => '0644',
-    source  => 'puppet:///modules/puppet/puppet.conf',
+    source  => 'puppet:///modules/puppetmaster/puppet.conf',
     require => Package[ 'puppetmaster' ],
     notify  => Service[ 'puppetmaster' ],
   }
 
   file { 'autosign.conf':
     path    => '/etc/puppet/autosign.conf',
-    owner   => 'root',
-    group   => 'root',
+    owner   => 'puppet',
+    group   => 'puppet',
     mode    => '0644',
     content => '*',
     require => Package[ 'puppetmaster' ],

@@ -1,9 +1,9 @@
-# == Class: puppet
+# == Class: puppetclient
 #
 # This class installs and manages the Puppet client daemon.
 #
 
-class puppet(
+class puppetclient(
   $ensure = hiera('client_ensure')
   ){
 
