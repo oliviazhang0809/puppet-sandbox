@@ -3,9 +3,9 @@
 # This class installs and manages the Puppet server daemon.
 #
 class puppetmaster(
-    $ensure       = hiera('server_ensure'),
-    $package_name = hiera('server_package_name')
-    ){
+  $ensure       = hiera('server_ensure'),
+  $package_name = hiera('server_package_name')
+  ){
 
   package { 'puppetmaster':
     ensure => $ensure,
@@ -34,7 +34,7 @@ class puppetmaster(
     owner   => 'puppet',
     group   => 'puppet',
     mode    => '0644',
-    content => '*',
+    content => hiera('autosign.conf'),
     require => Package[ 'puppetmaster' ],
   }
 

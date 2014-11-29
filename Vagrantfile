@@ -14,6 +14,16 @@ cluster_seed_servers = "influxdbSeed.example.com"   # this is for virtualbox, yo
 db_name = "test2"
 virtual_box_domain = 'example.com'
 
+$script = <<SCRIPT
+
+gem install -q -v=3.7.3 --no-rdoc --no-ri puppet
+gem install -v=2.2.8 --no-rdoc --no-ri CFPropertyList
+gem install -q -v=1.1.1 --no-rdoc --no-ri hiera-file
+gem install -q -v=1.0.1 --no-rdoc --no-ri deep_merge
+puppet agent --enable
+
+SCRIPT
+
 puppet_nodes = [
   {:hostname => 'puppet',         :role => 'master',        :ip => '172.16.32.10', :fwdhost => 8142, :fwdguest => 8140, :autostart => true, :ram => 1024},
   {:hostname => 'influxdbSeed',   :role => 'influxdbSeed',  :ip => '172.16.32.11', :fwdhost => 8004, :fwdguest => 8083, :autostart => true, :ram => 1024},
@@ -52,9 +62,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
         node_config.vm.network :forwarded_port, guest: node[:fwdguest], host: node[:fwdhost]
       end
 
-      # install puppet gem
-      node_config.vm.provision "shell", inline: "gem install -q -v=3.7.3 --no-rdoc --no-ri puppet"
-      node_config.vm.provision "shell", inline: "gem install -v=2.2.8 --no-rdoc --no-ri CFPropertyList"
+      # install required gem files
+      node_config.vm.provision "shell", inline: $script
 
       node_config.vm.synced_folder ".", "/var/www/puppet/", mount_options: ["dmode=777,fmode=666"]
 

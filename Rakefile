@@ -5,5 +5,6 @@ Rake::Task[:lint].clear
 
 PuppetLint::RakeTask.new :lint do |config|
   config.ignore_paths = ['modules/**/*.pp']
-  config.disable_checks = ['single_quote_string_with_variables', '80chars']
+  config.log_format = "%{path}:%{linenumber}:%{check}:%{KIND}:%{message}"
+  config.disable_checks = ['single_quote_string_with_variables', '80chars', 'class_inherits_from_params_class', 'variable_scope']
 end
