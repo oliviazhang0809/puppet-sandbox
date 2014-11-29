@@ -38,7 +38,7 @@ class hekad (
     ensure => present,
   }
 
-  class { 'hekad::config': require => User['hekadUser'], }
+  class { 'hekad::config': }
   class { 'hekad::install': require => User['hekadUser'], }
   class { 'hekad::service': }
 }

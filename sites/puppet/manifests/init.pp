@@ -4,8 +4,8 @@
 #
 
 class puppet(
-  $ensure = $puppet::params::client_ensure
-) inherits puppet::params {
+  $ensure = hiera('client_ensure')
+  ){
 
   package { 'puppet':
     ensure => $ensure,
