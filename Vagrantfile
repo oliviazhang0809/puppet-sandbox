@@ -1,7 +1,7 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
-require 'vagrant-openstack-plugin'
+# require 'vagrant-openstack-plugin'
 
 VAGRANTFILE_API_VERSION = "2"
 virtual_box = 'centos-64-x64-vbox4210'
