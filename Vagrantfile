@@ -1,15 +1,15 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
-# require 'vagrant-openstack-plugin'
+#require 'vagrant-openstack-plugin'
 
 VAGRANTFILE_API_VERSION = "2"
 virtual_box = 'centos-64-x64-vbox4210'
 openstack_box = 'emi-centos-6.4-x86_64'
+provider = ENV['PROVIDER']                          # could be either "v: virtualbox" or "o: openstack"
 
 # Default settings:
 environment = "dev"
-provider = "virtualbox"                             # could be either "virtualbox" or "openstack"
 cluster_seed_servers = "influxdbSeed.example.com"   # this is for virtualbox, you need to setup for c3 instance after vagrant up influxdbSeed node
 db_name = "test2"
 virtual_box_domain = 'example.com'
@@ -53,7 +53,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
     config.vm.define node[:hostname], autostart: node[:autostart] do |node_config|
       # only for virtualbox, hostname and ip need to be setup
-      if provider == "virtualbox"
+      if provider == "v"
         node_config.vm.hostname = node[:hostname] + '.' + virtual_box_domain
         node_config.vm.network :private_network, ip: node[:ip]
       end
