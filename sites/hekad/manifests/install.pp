@@ -11,10 +11,11 @@ class hekad::install {
 
   file { '/etc/init.d/hekad':
     ensure  => file,
-    content => template('hekad/init.sh'),
+    content => hiera('init.sh'),
     owner   => 'hekadUser',
     group   => 'hekadUser',
-  } ->
+    before  => Exec['create_service']
+  }
 
   exec {'create_service':
     command => 'chmod +x /etc/init.d/hekad',

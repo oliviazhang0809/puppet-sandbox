@@ -9,6 +9,6 @@ class networking {
     owner   => 'root',
     group   => 'root',
     mode    => '0644',
-    content => hiera('hosts.erb'),
+    content => template('networking/hosts.erb'),
   }
 }
