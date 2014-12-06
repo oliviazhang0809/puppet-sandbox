@@ -16,7 +16,7 @@ FORGE
 
 GIT
   remote: https://github.com/echocat/puppet-grafana.git
-  ref: master
+  ref: 1399bd054b307e0eb23b70237df4726aa8e9b63c
   sha: 1399bd054b307e0eb23b70237df4726aa8e9b63c
   specs:
     echocat-puppet-grafana (1.0.0)

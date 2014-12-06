@@ -6,7 +6,7 @@
 #
 
 class repos {
-  $os_release_major_version = regsubst($operatingsystemrelease, '^(\d+).*$', '\1')
+  $os_release_major_version = regsubst($::operatingsystemrelease, '^(\d+).*$', '\1')
 
   file { 'puppetlabs.repo':
     ensure  => present,

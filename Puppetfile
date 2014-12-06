@@ -18,7 +18,8 @@ mod 'jdowning/influxdb', '0.3.0'
 
 # grafana
 mod 'echocat/puppet-grafana',
-    :git => 'https://github.com/echocat/puppet-grafana.git'
+    :git => 'https://github.com/echocat/puppet-grafana.git',
+    :ref => '1399bd054b307e0eb23b70237df4726aa8e9b63c'
 
 # apache
 mod 'puppetlabs/apache', '1.2.0'

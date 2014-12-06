@@ -17,15 +17,14 @@ class vagrant {
     ensure => present,
   }
 
-  user { 'hekadUser':
+  user { 'hekad':
     ensure  => present,
-    comment => 'hekad User',
-    gid     => 'hekadUser',
-    require => Group['hekadUser'],
+    comment => 'hekad',
+    gid     => 'hekad',
+    require => Group['hekad'],
   }
 
-  group { 'hekadUser':
+  group { 'hekad':
     ensure => present,
   }
-
 }

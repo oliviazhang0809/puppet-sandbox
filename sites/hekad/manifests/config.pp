@@ -76,6 +76,6 @@ class hekad::config {
     ensure  => present,
     path    => $hekad::config_path,
     notify  => Service['hekad'],
-    require => [ Package['hekad'], User['hekadUser']]
+    require => [ Package['hekad'], User['hekad']]
   }
 }

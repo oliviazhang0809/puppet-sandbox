@@ -3,6 +3,7 @@
 # This class implements influxdb module and config it to join cluster based on seed node
 #
 class influxdbchild(
+    $influx_version = hiera('influx_version'),
     $cluster_seed_servers = hiera('cluster_seed_servers')
     ) {
 
@@ -11,6 +12,7 @@ class influxdbchild(
     # step 3: remove raft dir and restart influxdb
 
     class {'influxdb':
+        version => $influx_version,
         cluster_seed_servers => $cluster_seed_servers
     }
 
