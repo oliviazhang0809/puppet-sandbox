@@ -12,7 +12,7 @@ provider = ENV['PROVIDER']                          # could be either "v: virtua
 environment = "dev"
 puppet_hostname = "puppet.example.com"
 cluster_seed_servers = "influxdbSeed.example.com"   # this is for virtualbox, you need to setup for c3 instance after vagrant up influxdbSeed node
-db_name = "test2"
+db_name = "test1"
 virtual_box_domain = 'example.com'
 
 $script = <<SCRIPT

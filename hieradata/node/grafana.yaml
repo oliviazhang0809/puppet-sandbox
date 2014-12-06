@@ -3,6 +3,7 @@ classes:
   - grafanaimpl
   - apacheimpl
 
+graphite_host: ''
 influxdb_host: %{cluster_seed_servers}
 influxdb_dbpath: '/db/%{db_name}'
 influxdb_user: 'root'
