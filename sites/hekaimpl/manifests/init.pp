@@ -1,8 +1,7 @@
-# Class: hekadimpl
+# Class: hekaimpl
 #
-# This class implements hekad module
-#
-class hekadimpl(
+# This class implements heka module
+class hekaimpl(
     $version = hiera('heka_version'),
     $pkg_version = hiera('heka_pkg_version'),
     $maxprocs = hiera('maxprocs'),
@@ -13,7 +12,7 @@ class hekadimpl(
     $password = hiera('password')
     ) {
 
-    class { 'hekad':
+    class { 'heka':
       version               => $version,
       pkg_version           => $pkg_version,
       maxprocs              => $maxprocs,

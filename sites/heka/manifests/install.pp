@@ -1,6 +1,6 @@
-# == Class: hekad::install
+# == Class: heka::install
 # DO NO CALL DIRECTLY
-class hekad::install {
+class heka::install {
 
   file { [ '/etc/hekad', '/opt/hekad', '/opt/hekad/shared', '/var/cache/hekad' ]:
     ensure => directory,
@@ -9,9 +9,10 @@ class hekad::install {
     before => Package[ 'hekad' ],
   }
 
+  # Create heka service
   file { '/etc/init.d/hekad':
     ensure  => file,
-    content => hiera('init.sh'),
+    content => template('heka/init.sh'),
     owner   => 'hekad',
     group   => 'hekad',
     mode    => '0700',
@@ -20,8 +21,8 @@ class hekad::install {
   # [install hekad]
   $package_provider = 'rpm'
   $package_source = $::architecture ? {
-    /64/    => "https://github.com/mozilla-services/heka/releases/download/v${hekad::version}/heka-${hekad::pkg_version}-linux-amd64.rpm",
-    default => "https://github.com/mozilla-services/heka/releases/download/v${hekad::version}/heka-${hekad::pkg_version}-linux-386.rpm",
+    /64/    => "https://github.com/mozilla-services/heka/releases/download/v${heka::version}/heka-${heka::pkg_version}-linux-amd64.rpm",
+    default => "https://github.com/mozilla-services/heka/releases/download/v${heka::version}/heka-${heka::pkg_version}-linux-386.rpm",
   }
 
   # get the package
@@ -32,7 +33,7 @@ class hekad::install {
   # install the package
   package { 'hekad':
     provider => $package_provider,
-    source   => '/opt/staging/hekad/hekad-package',
+    source   => '/opt/staging/heka/hekad-package',
     require  => Staging::File['hekad-package'],
   }
 
@@ -47,7 +48,7 @@ class hekad::install {
   # install the package
   package { 'daemon':
     provider => $package_provider,
-    source   => '/opt/staging/hekad/daemon-package',
+    source   => '/opt/staging/heka/daemon-package',
     require  => Staging::File['daemon-package'],
   }
 }

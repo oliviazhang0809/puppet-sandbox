@@ -1,80 +1,80 @@
-# == Class: hekad::config
-class hekad::config {
+# == Class: heka::config
+class heka::config {
 
   # [hekad]
   ini_setting { 'maxprocs':
     section => 'hekad',
     setting => 'maxprocs',
-    value   => $hekad::maxprocs,
+    value   => $heka::maxprocs,
   }
 
   # [StatAccumInput]
   ini_setting { 'ticker_interval':
     section => 'StatAccumInput',
     setting => 'ticker_interval',
-    value   => $hekad::ticker_interval,
+    value   => $heka::ticker_interval,
   }
 
   ini_setting { 'emit_in_fields':
     section => 'StatAccumInput',
     setting => 'emit_in_fields',
-    value   => $hekad::emit_in_fields,
+    value   => $heka::emit_in_fields,
   }
 
   # [statmetric-influx-encoder]
   ini_setting { 'influx_encoder_type':
     section => 'statmetric-influx-encoder',
     setting => 'type',
-    value   => "\"${hekad::influx_encoder_type}\"",
+    value   => "\"${heka::influx_encoder_type}\"",
   }
 
   ini_setting { 'influx_encoder_filename':
     section => 'statmetric-influx-encoder',
     setting => 'filename',
-    value   => "\"${hekad::influx_encoder_filename}\"",
+    value   => "\"${heka::influx_encoder_filename}\"",
   }
 
   # [influx]
   ini_setting { 'influx_output_type':
     section => 'influx',
     setting => 'type',
-    value   => "\"${hekad::influx_output_type}\"",
+    value   => "\"${heka::influx_output_type}\"",
   }
 
   ini_setting { 'influx_message_matcher':
     section => 'influx',
     setting => 'message_matcher',
-    value   => "\"${hekad::influx_message_matcher}\"",
+    value   => "\"${heka::influx_message_matcher}\"",
   }
 
   ini_setting { 'influx_output_address':
     section => 'influx',
     setting => 'address',
-    value   => "\"${hekad::influx_output_address}\"",
+    value   => "\"${heka::influx_output_address}\"",
   }
 
   ini_setting { 'encoder':
     section => 'influx',
     setting => 'encoder',
-    value   => "\"${hekad::encoder}\"",
+    value   => "\"${heka::encoder}\"",
   }
 
   ini_setting { 'username':
     section => 'influx',
     setting => 'username',
-    value   => "\"${hekad::username}\"",
+    value   => "\"${heka::username}\"",
   }
 
   ini_setting { 'password':
     section => 'influx',
     setting => 'password',
-    value   => "\"${hekad::password}\"",
+    value   => "\"${heka::password}\"",
   }
 
   # defaults for all settings
   Ini_setting {
     ensure  => present,
-    path    => $hekad::config_path,
+    path    => $heka::config_path,
     notify  => Service['hekad'],
     require => [ Package['hekad'], User['hekad']]
   }
