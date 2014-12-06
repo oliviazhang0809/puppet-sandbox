@@ -11,6 +11,7 @@
 class hekad (
   $ensure                               = $hekad::params::ensure,
   $version                              = $hekad::params::version,
+  $pkg_version                          = $hekad::params::pkg_version,
   $install_from_repository              = $hekad::params::install_from_repository,
   $config_path                          = $hekad::params::config_path,
   $exec_path                            = $hekad::params::exec_path,

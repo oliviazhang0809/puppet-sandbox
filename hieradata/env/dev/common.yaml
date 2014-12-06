@@ -1,9 +1,16 @@
 ---
 classes:
-  - puppetclient
+  - puppet
   - networking
 
-client_ensure: 'latest'
-server_ensure: 'latest'
-server_package_name: 'puppet-server'
+puppet_hostname: %{puppet_hostname}
+
+client_version: '3.7.3-1.el6'
+server_version: '3.7.3-1.el6'
+passenger_version: 4.0.53
+influx_version: '0.8.7'
+grafana_version: '1.8.1'
+heka_version: '0.8.0'
+heka_pkg_version: '0_8_0'
+
 cluster_seed_servers: '["%{cluster_seed_servers}:8090"]'

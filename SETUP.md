@@ -36,7 +36,6 @@ Please check settings in `Vagrantfile`, to see if the following variables are se
 
 `db_name`: "test2" -- default database
 
-You will be prompt to enter your box `provider`: "v: virtualbox, o: openstack" when you start running the program
 Running with virtualbox, these machines are using following IP addresses and ports:
 
 * _puppet_ - `172.16.32.10:8140`
@@ -59,13 +58,11 @@ Note: for this project, your keypair should be named as `metrics` instead of `va
 
 ## Bring up your machines
 
-You can easily bring up virtual boxes by 
+You can easily bring up your machine by
 
-    $ . bin/metrics_virtualbox.sh
+    $ . bin/metrics.sh
 
-If you want to create c3 instances, you can do
-
-    $ . bin/metrics_openstack.sh
+In the prompt, you can specify the `provider` of your machines: v -- virtualbox, o -- openstack.
 
 If you are running with c3 instances, you need to set up `cluster_seed_servers` (`$project_root/hieradata/env/dev/common`) after you have influxdbSeed node up so that the client nodes can have a recognizable hostname to join.
 
