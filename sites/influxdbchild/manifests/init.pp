@@ -12,7 +12,7 @@ class influxdbchild(
     # step 3: remove raft dir and restart influxdb
 
     class {'influxdb':
-        version => $influx_version,
+        version              => $influx_version,
         cluster_seed_servers => $cluster_seed_servers
     }
 
