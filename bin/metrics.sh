@@ -22,6 +22,9 @@ librarian-puppet install --verbose
 # change the name of grafana module
 mv modules/puppet-grafana modules/grafana
 rm -rf modules/puppet-grafana
+# change the name of hekad module
+mv modules/puppet-hekad modules/hekad
+rm -rf modules/puppet-hekad
 
 # install vagrant-openstack-plugin
 vagrant plugin list | grep vagrant-openstack-plugin

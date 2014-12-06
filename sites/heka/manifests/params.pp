@@ -1,6 +1,6 @@
-# == Class: hekad::params
+# == Class: heka::params
 # DO NOT CALL DIRECTLY
-class hekad::params {
+class heka::params {
 
     $ensure                               = 'installed'
     $version                              = '0.8.0'
@@ -23,7 +23,7 @@ class hekad::params {
     # [influx]
     $influx_output_type                   = 'HttpOutput'
     $influx_message_matcher               = "Type == 'heka.statmetric'"
-    $influx_output_address                = 'http://heka-test-machine-435283.phx01.dev.ebayc3.com:8086/db/heka_test1/series'
+    $influx_output_address                = 'localhost'
     $encoder                              = 'statmetric-influx-encoder'
     $username                             = 'root'
     $password                             = 'root'

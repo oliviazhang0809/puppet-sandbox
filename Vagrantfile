@@ -31,7 +31,7 @@ puppet_nodes = [
   {:hostname => 'grafana',        :role => 'grafana',       :ip => '172.16.32.12', :fwdhost => 8003, :fwdguest => 80,   :autostart => true, :ram => 1024},
   {:hostname => 'influxdbChild1', :role => 'influxdbChild', :ip => '172.16.32.13', :fwdhost => 8005, :fwdguest => 8083, :autostart => true, :ram => 1024},
   {:hostname => 'influxdbChild2', :role => 'influxdbChild', :ip => '172.16.32.14', :fwdhost => 8006, :fwdguest => 8083, :autostart => true, :ram => 1024},
-  {:hostname => 'hekad',          :role => 'hekad',         :ip => '172.16.32.15', :fwdhost => 8007, :fwdguest => 8125, :autostart => true, :ram => 1024},
+  {:hostname => 'hekad',          :role => 'heka',          :ip => '172.16.32.15', :fwdhost => 8007, :fwdguest => 8125, :autostart => true, :ram => 1024},
 ]
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|

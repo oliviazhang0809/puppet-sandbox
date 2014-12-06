@@ -1,6 +1,6 @@
 ---
 classes:
-  - hekadimpl
+  - hekaimpl
 
 maxprocs: 1
 ticker_interval: 5
