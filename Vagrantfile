@@ -63,26 +63,32 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
         node_config.vm.network :forwarded_port, guest: node[:fwdguest], host: node[:fwdhost]
       end
 
+      node_config.ssh.shell = "bash -c 'BASH_ENV=/etc/profile exec bash'"
+
       # install required gem files
       node_config.vm.provision "shell", inline: $script
 
-      node_config.vm.synced_folder ".", "/var/www/puppet/", mount_options: ["dmode=777,fmode=666"]
-
-      node_config.vm.provision :puppet do |puppet|
-        puppet.hiera_config_path = "hiera.yaml"
-        puppet.manifests_path = 'manifests'
-        puppet.manifest_file  = "default.pp"
-        puppet.module_path = ['modules', 'sites']
-        puppet.facter = {
-          "role" => node[:role],
-          "environment" => environment,
-          "cluster_seed_servers" => cluster_seed_servers,
-          "puppet_hostname" => puppet_hostname,
-          "db_name" => db_name
-        }
-        puppet.options = "--verbose --debug --test"
+      if node[:role] == "master"
+        node_config.vm.synced_folder ".", "/var/www/puppet/", mount_options: ["dmode=777,fmode=666"]
+        node_config.vm.provision :puppet do |puppet|
+          puppet.hiera_config_path = "hiera.yaml"
+          puppet.manifests_path = 'manifests'
+          puppet.manifest_file  = "default.pp"
+          puppet.module_path = ['modules', 'sites']
+          puppet.facter = {
+            "role" => node[:role],
+            "environment" => environment,
+            "cluster_seed_servers" => cluster_seed_servers,
+            "puppet_hostname" => puppet_hostname,
+            "db_name" => db_name
+          }
+          puppet.options = "--verbose --debug --test"
+        end
+      else
+        node_config.vm.provision "puppet_server" do |puppet|
+          puppet.options = "--verbose --debug --test --waitforcert 60"
+        end
       end
-
         # shut off the firewall
       node_config.vm.provision "shell", inline: "iptables -F"
       node_config.vm.provision "shell", inline: "service iptables save"
