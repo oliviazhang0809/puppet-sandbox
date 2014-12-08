@@ -19,8 +19,15 @@ class puppet::master(
     before => Package[ 'puppet-server' ],
   }
 
+  # create a mirror in sync folder
+  file { '/var/www/puppet/autosign.conf':
+    ensure  => link,
+    target  => '/etc/puppet/autosign.conf',
+    require => Package[ 'puppetmaster' ],
+  }
+
   file { 'autosign.conf':
-    path    => '/var/www/puppet/autosign.conf',
+    path    => '/etc/puppet/autosign.conf',
     owner   => 'puppet',
     group   => 'puppet',
     mode    => '0644',

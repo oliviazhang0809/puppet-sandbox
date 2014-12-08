@@ -21,6 +21,8 @@ gem install -q -v=3.7.2 --no-rdoc --no-ri puppet
 gem install -v=2.2.8 --no-rdoc --no-ri CFPropertyList
 gem install -q -v=1.1.1 --no-rdoc --no-ri hiera-file
 gem install -q -v=1.0.1 --no-rdoc --no-ri deep_merge
+
+echo  "172.16.32.10 puppet.example.com puppet" >> /etc/hosts
 puppet agent --enable
 
 SCRIPT
@@ -65,6 +67,32 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
       node_config.ssh.shell = "bash -c 'BASH_ENV=/etc/profile exec bash'"
 
+      # setup role as a custom fact
+      node_config.vm.provision "shell" do |s|
+        s.inline = "mkdir -p /etc/facter/facts.d && echo role=$1 > /etc/facter/facts.d/role.txt"
+        s.args = [ node[:role] ]
+      end
+
+      node_config.vm.provision "shell" do |s|
+        s.inline = "mkdir -p /etc/facter/facts.d && echo environment=$1 > /etc/facter/facts.d/environment.txt"
+        s.args = [ environment ]
+      end
+
+      node_config.vm.provision "shell" do |s|
+        s.inline = "mkdir -p /etc/facter/facts.d && echo cluster_seed_servers=$1 > /etc/facter/facts.d/cluster_seed_servers.txt"
+        s.args = [ cluster_seed_servers ]
+      end
+
+      node_config.vm.provision "shell" do |s|
+        s.inline = "mkdir -p /etc/facter/facts.d && echo puppet_hostname=$1 > /etc/facter/facts.d/puppet_hostname.txt"
+        s.args = [ puppet_hostname ]
+      end
+
+      node_config.vm.provision "shell" do |s|
+        s.inline = "mkdir -p /etc/facter/facts.d && echo db_name=$1 > /etc/facter/facts.d/db_name.txt"
+        s.args = [ db_name ]
+      end
+
       # install required gem files
       node_config.vm.provision "shell", inline: $script
 
@@ -86,6 +114,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
         end
       else
         node_config.vm.provision "puppet_server" do |puppet|
+          puppet.puppet_server = puppet_hostname
           puppet.options = "--verbose --debug --test --waitforcert 60"
         end
       end
