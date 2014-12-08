@@ -5,7 +5,7 @@
 .scala_dependencies
 .idea/
 .idea/workspace.xml
-.vagrant
+.vagrant/
 .DS_Store
 
 # librarian-puppet

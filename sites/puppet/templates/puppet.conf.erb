@@ -10,8 +10,7 @@
 [master]
     ssl_client_header = SSL_CLIENT_S_DN
     ssl_client_verify_header = SSL_CLIENT_VERIFY
-    storeconfigs = true
-    autosign = /var/www/puppet/autosign.conf
+    autosign = /etc/puppet/autosign.conf
 
 [agent]
     server = <%= scope.function_hiera(['puppet_hostname']) %>

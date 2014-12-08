@@ -5,7 +5,7 @@ class puppet::config {
   file { 'puppet.conf':
     ensure  => present,
     content => template('puppet/puppet.conf.erb'),
-    path    => '/var/www/puppet/puppet.conf',
+    path    => '/etc/puppet/puppet.conf',
     owner   => 'puppet',
     group   => 'puppet',
     mode    => '0644',

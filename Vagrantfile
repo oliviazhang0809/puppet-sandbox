@@ -17,8 +17,9 @@ virtual_box_domain = 'example.com'
 
 $script = <<SCRIPT
 
-gem install -q -v=3.7.2 --no-rdoc --no-ri puppet
-gem install -v=2.2.8 --no-rdoc --no-ri CFPropertyList
+rpm -ivh http://yum.puppetlabs.com/el/6.4/products/x86_64/puppetlabs-release-6-7.noarch.rpm
+#gem install -q -v=3.7.2 --no-rdoc --no-ri puppet
+#gem install -v=2.2.8 --no-rdoc --no-ri CFPropertyList
 gem install -q -v=1.1.1 --no-rdoc --no-ri hiera-file
 gem install -q -v=1.0.1 --no-rdoc --no-ri deep_merge
 
@@ -97,7 +98,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       node_config.vm.provision "shell", inline: $script
 
       if node[:role] == "master"
-        node_config.vm.synced_folder ".", "/var/www/puppet/", mount_options: ["dmode=777,fmode=666"]
+        node_config.vm.provision "shell", inline: "yum -y install puppet-server"
+        node_config.vm.synced_folder ".", "/etc/puppet/", mount_options: ["dmode=777,fmode=666"]
         node_config.vm.provision :puppet do |puppet|
           puppet.hiera_config_path = "hiera.yaml"
           puppet.manifests_path = 'manifests'
@@ -114,6 +116,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
         end
       else
         node_config.vm.provision "puppet_server" do |puppet|
+          node_config.vm.provision "shell", inline: "yum -y install puppet"
           puppet.puppet_server = puppet_hostname
           puppet.options = "--verbose --debug --test --waitforcert 60"
         end
