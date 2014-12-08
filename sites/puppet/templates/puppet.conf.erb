@@ -3,7 +3,6 @@
     rundir = /var/run/puppet
     vardir = /var/lib/puppet
     ssldir = $vardir/ssl
-    certname = <%= scope.function_hiera(['puppet_hostname']) %>
     basemodulepath = '$confdir/modules:$confdir/sites'
     pluginsync = true
 
