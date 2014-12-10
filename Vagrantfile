@@ -8,12 +8,14 @@ virtual_box = 'centos-64-x64-vbox4210'
 openstack_box = 'emi-centos-6.4-x86_64'
 provider = ENV['PROVIDER']                          # could be either "v: virtualbox" or "o: openstack"
 
-# Default settings:
+# Hard-coded Default settings:
 environment = "dev"
-puppet_hostname = "puppet.example.com"
-cluster_seed_servers = "influxdbSeed.example.com"   # this is for virtualbox, you need to setup for c3 instance after vagrant up influxdbSeed node
-db_name = "test1"
+master_name = "puppet"
+master_ip = "172.16.32.10"
 virtual_box_domain = 'example.com'
+puppet_hostname = master_name + "." + virtual_box_domain
+cluster_seed_servers = "influxdbSeed." + virtual_box_domain  # this is for virtualbox, you need to setup for c3 instance after vagrant up influxdbSeed node
+db_name = "test1"
 
 $script = <<SCRIPT
 
@@ -22,13 +24,16 @@ gem install -v=2.2.8 --no-rdoc --no-ri CFPropertyList
 gem install -q -v=1.1.1 --no-rdoc --no-ri hiera-file
 gem install -q -v=1.0.1 --no-rdoc --no-ri deep_merge
 
-echo  "172.16.32.10 puppet.example.com puppet" >> /etc/hosts
+# only need to do that for virtual box
+if [ $1 = "v" ]; then
+  echo  "$3 $2.example.com $2" >> /etc/hosts
+fi
 puppet agent --enable
 
 SCRIPT
 
 puppet_nodes = [
-  {:hostname => 'puppet',         :role => 'master',        :ip => '172.16.32.10', :fwdhost => 8142, :fwdguest => 8140, :autostart => true, :ram => 1024},
+  {:hostname => master_name,    :role => 'master',        :ip => master_ip, :fwdhost => 8142, :fwdguest => 8140, :autostart => true, :ram => 1024},
   {:hostname => 'influxdbSeed',   :role => 'influxdbSeed',  :ip => '172.16.32.11', :fwdhost => 8004, :fwdguest => 8083, :autostart => true, :ram => 1024},
   {:hostname => 'grafana',        :role => 'grafana',       :ip => '172.16.32.12', :fwdhost => 8003, :fwdguest => 80,   :autostart => true, :ram => 1024},
   {:hostname => 'influxdbChild1', :role => 'influxdbChild', :ip => '172.16.32.13', :fwdhost => 8005, :fwdguest => 8083, :autostart => true, :ram => 1024},
@@ -93,8 +98,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
         s.args = [ db_name ]
       end
 
-      # install required gem files
-      node_config.vm.provision "shell", inline: $script
+      node_config.vm.provision "shell", inline: $script, args: [ provider, master_name, master_ip ]
 
       if node[:role] == "master"
         node_config.vm.synced_folder ".", "/etc/puppet/", mount_options: ["dmode=777,fmode=666"]

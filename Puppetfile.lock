@@ -22,10 +22,21 @@ GIT
     echocat-puppet-grafana (1.0.0)
       puppetlabs-stdlib (>= 3.2.0)
 
+GIT
+  remote: https://github.com/oliviazhang0809/puppet-heka.git
+  ref: master
+  sha: ebaaff817ba7fb6a7bb35750322002152b907d38
+  specs:
+    oliviazhang0809-puppet-heka (1.0.0)
+      nanliu-staging (>= 0.4.0)
+      puppetlabs-inifile (>= 1.0.0)
+      puppetlabs-stdlib (>= 3.2.0)
+
 DEPENDENCIES
   echocat-puppet-grafana (>= 0)
   gini-archive (= 0.2.1)
   jdowning-influxdb (= 0.3.0)
+  oliviazhang0809-puppet-heka (>= 0)
   puppetlabs-apache (= 1.2.0)
   puppetlabs-stdlib (= 4.4.0)
 

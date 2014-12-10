@@ -3,7 +3,7 @@
 # This class installs and manages the Puppet server daemon.
 #
 class puppet::master(
-  $ensure = hiera('server_version')
+  $ensure = hiera('puppet_version')
   ){
 
   include puppet

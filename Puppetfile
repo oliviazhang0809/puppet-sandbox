@@ -21,5 +21,10 @@ mod 'echocat/puppet-grafana',
     :git => 'https://github.com/echocat/puppet-grafana.git',
     :ref => '1399bd054b307e0eb23b70237df4726aa8e9b63c'
 
+# heka
+mod 'oliviazhang0809/puppet-heka',
+    :git => 'https://github.com/oliviazhang0809/puppet-heka.git',
+    :ref => 'ebaaff817ba7fb6a7bb35750322002152b907d38'
+
 # apache
 mod 'puppetlabs/apache', '1.2.0'
