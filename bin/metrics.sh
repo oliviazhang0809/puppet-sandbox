@@ -31,6 +31,7 @@ vagrant plugin list | grep vagrant-openstack-plugin
 if [ $? -ne 0 ]; then
   echo "Installing: vagrant plugin: vagrant-openstack-plugin and dependencies"
   sudo gem install fission -v '0.5.0'
+  sudo gem install ffi -v '1.9.6'
   # need to install 0.8.0 to make it work
   sudo gem install -q -v=0.8.0 --no-rdoc --no-ri vagrant-openstack-plugin
   sudo vagrant plugin install vagrant-openstack-plugin --plugin-version 0.8.0
