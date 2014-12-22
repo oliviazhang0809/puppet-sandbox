@@ -3,7 +3,7 @@
 # This class installs and manages the Puppet server daemon.
 #
 class puppet::master(
-  $ensure = hiera('server_version')
+  $ensure = hiera('puppet_version')
   ){
 
   include puppet
@@ -12,7 +12,7 @@ class puppet::master(
     ensure => $ensure,
   }
 
-  file { [ '/var/www/puppet', '/var/www/puppet/modules' ]:
+  file { [ '/etc/puppet', '/etc/puppet/modules' ]:
     ensure => directory,
     owner  => 'puppet',
     group  => 'puppet',
@@ -20,7 +20,7 @@ class puppet::master(
   }
 
   file { 'autosign.conf':
-    path    => '/var/www/puppet/autosign.conf',
+    path    => '/etc/puppet/autosign.conf',
     owner   => 'puppet',
     group   => 'puppet',
     mode    => '0644',

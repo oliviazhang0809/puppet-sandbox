@@ -4,7 +4,7 @@
 #
 class influxdbcommon (
     $influx_version = hiera('influx_version')
-   ){
+  ){
 
     # step 1: load and install influxdb
     # step 2: remove raft dir and restart influxdb

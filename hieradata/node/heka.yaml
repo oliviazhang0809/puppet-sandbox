@@ -8,3 +8,4 @@ emit_in_fields: true
 influx_output_address: "http://heka-test-machine-435283.phx01.dev.ebayc3.com:8086/db/heka_test1/series"
 username: "root"
 password: "root"
+statusd_input_address: "0.0.0.0:8125"

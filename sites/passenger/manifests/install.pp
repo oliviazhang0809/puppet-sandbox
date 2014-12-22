@@ -1,20 +1,33 @@
 # == Class: passenger::install
 # DO NO CALL DIRECTLY
 class passenger::install (
-  $passenger_version = hiera('passenger_version')
+  $rack_version = hiera('rack_version'),
+  $passenger_version = hiera('passenger_version'),
+  $httpd_version = hiera('httpd_version'),
+  $ruby_devel_version = hiera('ruby_devel_version'),
+  $libcurl_devel_version = hiera('libcurl_devel_version'),
+  $rubygem_version = hiera('rubygem_version')
   ) {
 
-  package { [ 'httpd', 'httpd-devel', 'mod_ssl', 'ruby-devel', 'libcurl-devel' ]:
+  package { [ 'httpd', 'httpd-devel', 'mod_ssl' ]:
+    ensure   => 'installed',
+  }
+
+  package { 'ruby-devel':
+    ensure   => 'installed',
+  }
+
+  package { 'libcurl-devel':
     ensure   => 'installed',
   }
 
   package { 'rubygems':
-    ensure => 'installed',
+    ensure => $rubygem_version,
     before => [ Package['rack'], Package['passenger'] ],
   }
 
   package { 'rack':
-    ensure   => 'installed',
+    ensure   => $rack_version,
     provider => gem,
   }
 

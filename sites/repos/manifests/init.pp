@@ -21,5 +21,6 @@ class repos {
     command     => '/usr/bin/yum makecache',
     subscribe   => File[ 'puppetlabs.repo' ],
     refreshonly => true,
+    timeout => 1800,
   }
 }

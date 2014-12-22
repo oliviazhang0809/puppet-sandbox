@@ -10,9 +10,9 @@
   - common
 
 :yaml:
-  :datadir: /var/www/puppet/hieradata
+  :datadir: /etc/puppet/hieradata
 
 :file:
-  :datadir: /var/www/puppet/hieradata
+  :datadir: /etc/puppet/hieradata
 
 :merge_behavior: deep

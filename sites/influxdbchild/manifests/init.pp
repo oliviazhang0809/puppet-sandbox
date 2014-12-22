@@ -14,7 +14,7 @@ class influxdbchild(
     class {'influxdb':
         version              => $influx_version,
         cluster_seed_servers => $cluster_seed_servers
-    }
+    } ->
 
     file { 'remove_raft':
         ensure  => absent,
